@@ -43,14 +43,16 @@ echo ${PASSWORD} | sudo -S  usermod -aG docker ${username}
 
 # Gnome tweak tool
 echo "gnome tweak tool"
-echo ${PASSWORD} | sudo -S  apt-get install -y gnome-tweak-tool
+echo ${PASSWORD} | sudo -S apt-get install -y gnome-tweak-tool
 # Dash to panel
 echo ${PASSWORD} | sudo -S sudo apt-get install -y gnome-shell-extension-dash-to-panel
 
 # Nvidia GPU Driver
+echo "Nvidia GPU Driver"
 echo ${PASSWORD} | sudo -S add-apt-repository ppa:graphics-drivers/ppa
 echo ${PASSWORD} | sudo -S apt update
 echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
 
 # Nvidia cuda toolkit
+echo "Nvidia cuda toolkit"
 echo ${PASSWORD} | sudo -S apt install -y nvidia-cuda-toolkit
