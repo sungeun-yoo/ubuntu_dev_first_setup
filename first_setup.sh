@@ -53,4 +53,4 @@ echo ${PASSWORD} | sudo -S apt update
 echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
 
 # Nvidia cuda toolkit
-echo ${PASSWORD} | sudo -S apt install nvidia-cuda-toolkit
+echo ${PASSWORD} | sudo -S apt install -y nvidia-cuda-toolkit
