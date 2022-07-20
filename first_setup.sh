@@ -47,7 +47,10 @@ echo ${PASSWORD} | sudo -S  apt-get install -y gnome-tweak-tool
 # Dash to panel
 echo ${PASSWORD} | sudo -S sudo apt-get install -y gnome-shell-extension-dash-to-panel
 
-# GPU Driver
+# Nvidia GPU Driver
 echo ${PASSWORD} | sudo -S add-apt-repository ppa:graphics-drivers/ppa
 echo ${PASSWORD} | sudo -S apt update
 echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
+
+# Nvidia cuda toolkit
+echo ${PASSWORD} | sudo -S apt install nvidia-cuda-toolkit
