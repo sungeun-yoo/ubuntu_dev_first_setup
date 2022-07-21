@@ -56,3 +56,7 @@ echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
 # Nvidia cuda toolkit
 echo "Nvidia cuda toolkit"
 echo ${PASSWORD} | sudo -S apt install -y nvidia-cuda-toolkit
+
+# Guvcview
+echo "Guvcview"
+echo ${PASSWORD} | sudo -S apt install -y guvcview
