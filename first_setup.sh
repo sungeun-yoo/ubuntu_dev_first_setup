@@ -60,3 +60,9 @@ echo ${PASSWORD} | sudo -S apt install -y nvidia-cuda-toolkit
 # Guvcview
 echo "Guvcview"
 echo ${PASSWORD} | sudo -S apt install -y guvcview
+
+# SSH server
+echo "Ssh server"
+echo ${PASSWORD} | sudo -S apt install openssh-server
+
+
