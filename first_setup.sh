@@ -41,15 +41,25 @@ echo ${PASSWORD} | sudo -S  sh get-docker.sh
 rm get-docker.sh 
 echo ${PASSWORD} | sudo -S  usermod -aG docker ${username}
 
+# Docker container toolkit
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+echo ${PASSWORD} | sudo -S apt-get update 
+echo ${PASSWORD} | sudo -S apt-get install -y nvidia-container-toolkit
+echo ${PASSWORD} | sudo -S systemctl restart docker
+
 # Gnome tweak tool
 echo "gnome tweak tool"
 echo ${PASSWORD} | sudo -S apt-get install -y gnome-tweak-tool
 # Dash to panel
-echo ${PASSWORD} | sudo -S sudo apt-get install -y gnome-shell-extension-dash-to-panel
+echo ${PASSWORD} | sudo -S apt-get install -y gnome-shell-extension-dash-to-panel
+
 
 # Nvidia GPU Driver
 echo "Nvidia GPU Driver"
-echo ${PASSWORD} | sudo -S add-apt-repository ppa:graphics-drivers/ppa
+echo ${PASSWORD} | 
+-S add-apt-repository ppa:graphics-drivers/ppa
 echo ${PASSWORD} | sudo -S apt update
 echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
 
