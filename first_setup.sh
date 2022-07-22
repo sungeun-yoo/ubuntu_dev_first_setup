@@ -75,4 +75,7 @@ echo ${PASSWORD} | sudo -S apt install -y guvcview
 echo "Ssh server"
 echo ${PASSWORD} | sudo -S apt install openssh-server
 
+# Net-tools
+echo "Net-tools"
+echo ${PASSWORD} | sudo -S apt install net-tools
 
