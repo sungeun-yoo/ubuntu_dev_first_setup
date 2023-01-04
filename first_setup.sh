@@ -79,3 +79,7 @@ echo ${PASSWORD} | sudo -S apt install openssh-server
 echo "Net-tools"
 echo ${PASSWORD} | sudo -S apt install net-tools
 
+# Solaar
+echo "Solaar"
+echo ${PASSWORD} | sudo -S add-apt-repository ppa:solaar-unifying/stable
+echo ${PASSWORD} | sudo -S apt install solaar
