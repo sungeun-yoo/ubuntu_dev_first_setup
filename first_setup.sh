@@ -1,85 +1,70 @@
 #!/bin/sh
 
-if [ ! "$#" -eq "2" ]
-then
-	echo "Please enter username as the first argument and su password as the second argument"
-	echo "  Ex) sh ./first_setup.sh mindforge *******"
-	exit
+# 입력 인자 검증
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <username> <sudo password>"
+    exit 1
 fi
+
 username=$1
 PASSWORD=$2
 
-echo ${PASSWORD} | sudo -S  apt update
-echo ${PASSWORD} | sudo -S  apt upgrade -y
+# sudo 명령을 실행하기 위한 함수
+sudo_cmd() {
+    echo ${PASSWORD} | sudo -S "$@"
+}
 
-# Chrome
-echo "Chrome"
+# 시스템 업데이트
+sudo_cmd apt update
+sudo_cmd apt upgrade -y
+
+# 패키지 설치 함수
+install_package() {
+    echo "Installing $1"
+    shift
+    sudo_cmd apt install -y "$@"
+}
+
+# Google Chrome 설치
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-echo ${PASSWORD} | sudo -S  dpkg -i google-chrome-stable_current_amd64.deb
+sudo_cmd dpkg -i google-chrome-stable_current_amd64.deb
 rm google-chrome-stable_current_amd64.deb
 
-# Vscode
-echo "vscode"
-echo ${PASSWORD} | sudo -S  apt-get install -y curl
-echo ${PASSWORD} | sudo -S  sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/etc/apt/trusted.gpg.d/microsoft.gpg'
-echo ${PASSWORD} | sudo -S  sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list' 
-echo ${PASSWORD} | sudo -S  apt update
-echo ${PASSWORD} | sudo -S  apt install -y code
+# Vscode, Git, Barrier, Docker 등의 설치
+install_package "VSCode" curl
+sudo_cmd sh -c 'curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >/etc/apt/trusted.gpg.d/microsoft.gpg'
+sudo_cmd sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+sudo_cmd apt update
+install_package "VSCode" code
+install_package "Git" git
+install_package "Barrier" barrier
 
-# Git
-echo "git"
-echo ${PASSWORD} | sudo -S  apt install -y git
-
-# Barrier
-echo "barrier"
-echo ${PASSWORD} | sudo -S  apt install -y barrier
-
-# Docker
-echo "docker"
+# Docker 설치
 curl -fsSL https://get.docker.com -o get-docker.sh
-echo ${PASSWORD} | sudo -S  sh get-docker.sh
+sudo_cmd sh get-docker.sh
 rm get-docker.sh 
-echo ${PASSWORD} | sudo -S  usermod -aG docker ${username}
+sudo_cmd usermod -aG docker ${username}
 
-# Docker container toolkit
+# NVIDIA Docker 도구 설치
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-echo ${PASSWORD} | sudo -S apt-get update 
-echo ${PASSWORD} | sudo -S apt-get install -y nvidia-container-toolkit
-echo ${PASSWORD} | sudo -S systemctl restart docker
+sudo_cmd apt update
+install_package "NVIDIA Container Toolkit" nvidia-container-toolkit
+sudo_cmd systemctl restart docker
 
-# Gnome tweak tool
-echo "gnome tweak tool"
-echo ${PASSWORD} | sudo -S apt-get install -y gnome-tweak-tool
-# Dash to panel
-echo ${PASSWORD} | sudo -S apt-get install -y gnome-shell-extension-dash-to-panel
+# 그 외의 패키지 설치
+install_package "GNOME Tweak Tool" gnome-tweak-tool
+install_package "Dash to Panel" gnome-shell-extension-dash-to-panel
+install_package "Guvcview" guvcview
+install_package "SSH server" openssh-server
+install_package "Net-tools" net-tools
+install_package "Solaar" solaar
 
+# Nvidia GPU Driver 및 CUDA 설치
+sudo_cmd add-apt-repository ppa:graphics-drivers/ppa
+sudo_cmd apt update
+sudo_cmd ubuntu-drivers autoinstall
+install_package "NVIDIA CUDA Toolkit" nvidia-cuda-toolkit
 
-# Nvidia GPU Driver
-echo "Nvidia GPU Driver"
-echo ${PASSWORD} | 
--S add-apt-repository ppa:graphics-drivers/ppa
-echo ${PASSWORD} | sudo -S apt update
-echo ${PASSWORD} | sudo -S ubuntu-drivers autoinstall
-
-# Nvidia cuda toolkit
-echo "Nvidia cuda toolkit"
-echo ${PASSWORD} | sudo -S apt install -y nvidia-cuda-toolkit
-
-# Guvcview
-echo "Guvcview"
-echo ${PASSWORD} | sudo -S apt install -y guvcview
-
-# SSH server
-echo "Ssh server"
-echo ${PASSWORD} | sudo -S apt install openssh-server
-
-# Net-tools
-echo "Net-tools"
-echo ${PASSWORD} | sudo -S apt install net-tools
-
-# Solaar
-echo "Solaar"
-echo ${PASSWORD} | sudo -S add-apt-repository ppa:solaar-unifying/stable
-echo ${PASSWORD} | sudo -S apt install solaar
+echo "Installation completed!"
